@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
 public class ExampleUnitTest {
     @Test
     public void addition_isCorrect() throws Exception {
-        assertEquals(9, 2 + 8);
+        assertEquals(10, 2 + 8);
     }
 
     @Test
