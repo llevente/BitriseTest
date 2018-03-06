@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         WebView webView = findViewById(R.id.webView);
         webView.clearCache(true);
 
+
+
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(new WebViewClient() {
 
