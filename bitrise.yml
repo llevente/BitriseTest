@@ -1,0 +1,86 @@
+---
+format_version: '4'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: android
+trigger_map:
+- push_branch: master
+  workflow: deploy
+- pull_request_source_branch: "*"
+  workflow: primary
+workflows:
+  deploy:
+    steps:
+    - activate-ssh-key@3.1.1:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4.0.8: {}
+    - cache-pull@2.0.1: {}
+    - script@1.1.5:
+        title: Do anything with Script step
+    - install-missing-android-tools@2.1.1: {}
+    - gradle-unit-test@1.0.5:
+        is_always_run: true
+    - gradle-runner@1.8.3:
+        inputs:
+        - gradle_file: "$GRADLE_BUILD_FILE_PATH"
+        - gradle_task: assembleRelease
+        - gradlew_path: "$GRADLEW_PATH"
+    - sign-apk@1.2.0: {}
+    - google-play-deploy@1.4.1:
+        inputs:
+        - service_account_json_key_path: "$BITRISEIO_SERVICE_ACCOUNT_JSON_KEY_URL"
+        - package_name: com.inpos.bitrisetest
+    - deploy-to-bitrise-io@1.3.10:
+        inputs:
+        - deploy_path: "$BITRISE_SIGNED_APK_PATH"
+        is_always_run: false
+    - git::https://github.com/llevente/bitrise-step-android-manifest-info.git@master:
+        is_always_run: true
+    - git-tag@1.1.0:
+        inputs:
+        - tag: v$AMI_VERSION_NAME.$AMI_VERSION_CODE
+        is_always_run: true
+    - cache-push@2.0.5: {}
+  primary:
+    steps:
+    - activate-ssh-key@3.1.1:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4.0.8: {}
+    - cache-pull@2.0.1: {}
+    - script@1.1.5:
+        title: Do anything with Script step
+    - install-missing-android-tools@2.1.1: {}
+    - gradle-unit-test:
+        is_always_run: true
+        inputs:
+        - unit_test_task: test
+    - gradle-runner@1.8.3:
+        inputs:
+        - gradle_file: "$GRADLE_BUILD_FILE_PATH"
+        - gradle_task: assembleDebug
+        - gradlew_path: "$GRADLEW_PATH"
+    - deploy-to-bitrise-io@1.3.10:
+        is_always_run: false
+    - cache-push@2.0.5: {}
+  tagtest:
+    steps:
+    - activate-ssh-key@3.1.1:
+        run_if: '{{getenv "SSH_RSA_PRIVATE_KEY" | ne ""}}'
+    - git-clone@4.0.8: {}
+    - cache-pull@2.0.1: {}
+    - install-missing-android-tools@2.1.1: {}
+    - git::https://github.com/llevente/bitrise-step-android-manifest-info.git@master:
+        is_always_run: true
+    - git-tag@1.1.0:
+        inputs:
+        - tag: v$AMI_VERSION_NAME.$AMI_VERSION_CODE
+        is_always_run: true
+    - cache-push@2.0.5: {}
+app:
+  envs:
+  - opts:
+      is_expand: false
+    GRADLE_BUILD_FILE_PATH: build.gradle
+  - opts:
+      is_expand: false
+    GRADLEW_PATH: "./gradlew"
+  - BITRISE_ANDROID_MANIFEST_PATH: ./app/build.gradle

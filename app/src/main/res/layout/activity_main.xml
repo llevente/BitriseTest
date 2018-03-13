@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.inpos.bitrisetest.MainActivity">
@@ -13,8 +13,25 @@
        android:layout_marginEnd="1dp"
        android:layout_marginStart="1dp"
        android:layout_marginTop="1dp"
+       android:visibility="gone"
        app:layout_constraintEnd_toEndOf="parent"
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintTop_toTopOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+   <Button
+       android:id="@+id/btnSubscribe"
+       android:layout_width="100dp"
+       android:layout_height="50dp"
+       android:text="SUBSCRIBE"
+       android:layout_centerInParent="true"
+       android:onClick="subcribeTapped" />
+
+   <TextView
+       android:id="@+id/tvStatus"
+       android:layout_width="wrap_content"
+       android:layout_centerHorizontal="true"
+       android:layout_below="@id/btnSubscribe"
+       android:text="You are subscribed"
+       android:layout_height="30dp" />
+
+</RelativeLayout>
